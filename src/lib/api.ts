@@ -49,7 +49,15 @@ export interface BusinessSubmission {
   phoneNumber: string;
   whatsappNumber?: string;
   // Operating hours
-  operatingHours?: Record<string, { open: string; close: string; closed: boolean }>;
+  operatingHours?: {
+    monday: { open: string; close: string; closed: boolean };
+    tuesday: { open: string; close: string; closed: boolean };
+    wednesday: { open: string; close: string; closed: boolean };
+    thursday: { open: string; close: string; closed: boolean };
+    friday: { open: string; close: string; closed: boolean };
+    saturday: { open: string; close: string; closed: boolean };
+    sunday: { open: string; close: string; closed: boolean };
+  };
   // Social media
   instagramHandle?: string;
   tiktokHandle?: string;
