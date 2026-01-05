@@ -1,291 +1,151 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Users, TrendingUp, Shield, ArrowRight, Store, Star, Smartphone } from "lucide-react";
+import { MapPin, ArrowRight, Zap, Shield } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-teal-50" />
-          <div className="absolute top-0 right-0 w-1/2 h-full opacity-30">
-            <svg viewBox="0 0 400 400" className="w-full h-full">
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#10b981" strokeWidth="0.5" opacity="0.3" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
+    <div className="min-h-screen bg-[#0a0f0d] text-white relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-emerald-600/15 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 right-0 w-[400px] h-[600px] bg-teal-600/10 rounded-full blur-[100px]" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10">
+        {/* Header */}
+        <header className="border-b border-white/5 backdrop-blur-xl bg-black/20">
+          <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+            <span className="font-bold text-xl bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Bursa</span>
+            <Link 
+              href="/signup"
+              className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
+            >
+              Daftar →
+            </Link>
           </div>
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl" />
-        </div>
+        </header>
 
-        <div className="max-w-6xl mx-auto px-4 py-20 lg:py-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="animate-fade-in">
-              <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <Store className="w-4 h-4" />
-                <span>Platform UMKM Indonesia</span>
-              </div>
-              
-              <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                Tampilkan Bisnis Anda di{" "}
-                <span className="gradient-text">Bursa</span>
-              </h1>
-              
-              <p className="text-lg lg:text-xl text-gray-600 mb-8 leading-relaxed">
-                Daftarkan UMKM Anda dan dapatkan visibilitas lebih luas. 
-                Ribuan pelanggan potensial menunggu untuk menemukan bisnis Anda di peta interaktif Bursa.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link 
-                  href="/signup" 
-                  className="btn-primary inline-flex items-center justify-center gap-2 text-lg"
-                >
-                  Daftarkan Bisnis Anda
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-                <a 
-                  href="#benefits" 
-                  className="btn-secondary inline-flex items-center justify-center gap-2 text-lg"
-                >
-                  Pelajari Lebih Lanjut
-                </a>
-              </div>
-
-              {/* Stats */}
-              <div className="flex gap-8 mt-12 pt-8 border-t border-gray-200">
-                <div>
-                  <div className="text-3xl font-bold text-emerald-600">100%</div>
-                  <div className="text-sm text-gray-500">Gratis</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-emerald-600">5 menit</div>
-                  <div className="text-sm text-gray-500">Waktu pendaftaran</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-emerald-600">24 jam</div>
-                  <div className="text-sm text-gray-500">Review cepat</div>
-                </div>
-              </div>
+        {/* Hero Section */}
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28">
+          <div className="max-w-3xl mx-auto text-center">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-6 sm:mb-8 backdrop-blur-sm">
+              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              <span>Platform Bisnis Indonesia</span>
             </div>
-
-            {/* Right Content - Illustration */}
-            <div className="animate-fade-in-delay-1 hidden lg:block">
-              <div className="relative">
-                {/* Mock Phone/Map UI */}
-                <div className="bg-white rounded-3xl shadow-2xl p-4 transform rotate-2 hover:rotate-0 transition-transform duration-300">
-                  <div className="bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl p-6 h-96 flex flex-col">
-                    {/* Mock Map Header */}
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-3 h-3 rounded-full bg-red-400" />
-                      <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                      <div className="w-3 h-3 rounded-full bg-green-400" />
-                    </div>
-                    
-                    {/* Mock Search Bar */}
-                    <div className="bg-white rounded-full px-4 py-2 shadow-sm flex items-center gap-2 mb-4">
-                      <MapPin className="w-4 h-4 text-emerald-500" />
-                      <span className="text-gray-400 text-sm">Cari UMKM di sekitar...</span>
-                    </div>
-                    
-                    {/* Mock Business Cards */}
-                    <div className="space-y-3 flex-1 overflow-hidden">
-                      {[
-                        { name: "Warung Bu Ani", rating: 4.8, category: "Makanan" },
-                        { name: "Toko Batik Cantik", rating: 4.9, category: "Fashion" },
-                        { name: "Kopi Nusantara", rating: 4.7, category: "Minuman" },
-                      ].map((business, i) => (
-                        <div 
-                          key={i} 
-                          className="bg-white rounded-xl p-3 shadow-sm flex items-center gap-3"
-                          style={{ animationDelay: `${i * 0.1}s` }}
-                        >
-                          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
-                            <Store className="w-6 h-6 text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-semibold text-gray-800 text-sm">{business.name}</div>
-                            <div className="text-xs text-gray-500">{business.category}</div>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                            <span className="text-sm font-medium">{business.rating}</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    {/* Your business could be here */}
-                    <div className="mt-4 border-2 border-dashed border-emerald-300 rounded-xl p-3 text-center">
-                      <span className="text-emerald-600 font-medium text-sm">
-                        ✨ Bisnis Anda bisa tampil di sini!
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Floating Elements */}
-                <div className="absolute -top-4 -left-4 bg-white rounded-xl shadow-lg p-3 animate-bounce">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                      <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    </div>
-                    <div className="text-xs">
-                      <div className="font-semibold text-gray-800">+250%</div>
-                      <div className="text-gray-500">Visibilitas</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section id="benefits" className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Mengapa Bergabung dengan Bursa?
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Platform yang dirancang khusus untuk membantu UMKM Indonesia berkembang dan menjangkau lebih banyak pelanggan.
+            
+            {/* Headline */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4 sm:mb-6 px-2">
+              Tampilkan bisnis Anda di{" "}
+              <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                Bursa
+              </span>
+            </h1>
+            
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-2">
+              Daftarkan bisnis Anda secara gratis dan dapatkan visibilitas lebih luas. 
+              Pelanggan potensial menunggu untuk menemukan bisnis Anda.
             </p>
+            
+            {/* CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 sm:mb-16 px-4">
+              <Link 
+                href="/signup" 
+                className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-emerald-400 hover:to-emerald-500 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 text-base sm:text-lg"
+              >
+                Daftarkan Bisnis
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+
+            {/* Stats */}
+            <div className="flex flex-wrap justify-center gap-6 sm:gap-12">
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-emerald-400">100%</div>
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">Gratis</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-emerald-400">5 menit</div>
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">Pendaftaran</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl sm:text-3xl font-bold text-emerald-400">Mudah</div>
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">Proses</div>
+              </div>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Features */}
+          <div className="mt-16 sm:mt-24 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             {[
               {
                 icon: MapPin,
                 title: "Tampil di Peta",
-                description: "Bisnis Anda akan muncul di peta interaktif, mudah ditemukan pelanggan sekitar.",
-                color: "emerald",
+                description: "Bisnis Anda muncul di peta interaktif, mudah ditemukan pelanggan.",
               },
               {
-                icon: Users,
-                title: "Jangkau Lebih Luas",
-                description: "Dapatkan eksposur ke ribuan pengguna yang mencari produk dan jasa di sekitar mereka.",
-                color: "blue",
-              },
-              {
-                icon: Smartphone,
-                title: "Mobile Friendly",
-                description: "Platform yang responsif, pelanggan bisa menemukan Anda dari mana saja.",
-                color: "purple",
+                icon: Zap,
+                title: "Proses Cepat",
+                description: "Hanya butuh 5 menit untuk mendaftarkan bisnis Anda.",
               },
               {
                 icon: Shield,
-                title: "100% Gratis",
-                description: "Tidak ada biaya tersembunyi. Daftarkan bisnis Anda secara gratis selamanya.",
-                color: "amber",
+                title: "Gratis Selamanya",
+                description: "Tidak ada biaya. Daftar gratis selamanya.",
               },
-            ].map((benefit, index) => (
-              <div
-                key={index}
-                className="card hover:shadow-lg transition-shadow duration-300 text-center group"
+            ].map((feature, i) => (
+              <div 
+                key={i} 
+                className="bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:bg-white/[0.05] hover:border-emerald-500/20 transition-all group"
               >
-                <div className={`w-14 h-14 mx-auto mb-4 rounded-xl bg-${benefit.color}-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                  <benefit.icon className={`w-7 h-7 text-${benefit.color}-600`} />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-emerald-500/20 transition-colors">
+                  <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">{benefit.title}</h3>
-                <p className="text-gray-600 text-sm">{benefit.description}</p>
+                <h3 className="font-semibold text-white mb-1 sm:mb-2 text-sm sm:text-base">{feature.title}</h3>
+                <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 bg-gradient-to-br from-emerald-50 to-teal-50">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Cara Mendaftar
-            </h2>
-            <p className="text-lg text-gray-600">
-              Hanya butuh 3 langkah mudah untuk menampilkan bisnis Anda
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Masuk dengan Google",
-                description: "Satu klik dengan akun Google Anda. Tanpa password, cepat dan aman.",
-              },
-              {
-                step: "02",
-                title: "Isi Informasi Bisnis",
-                description: "Lengkapi detail bisnis, lokasi, dan kontak Anda.",
-              },
-              {
-                step: "03",
-                title: "Tunggu Verifikasi",
-                description: "Tim kami akan mereview dalam 24 jam. Setelah disetujui, bisnis Anda langsung tampil!",
-              },
-            ].map((item, index) => (
-              <div key={index} className="relative">
-                <div className="card-elevated text-center">
-                  <div className="text-5xl font-bold text-emerald-100 mb-4">{item.step}</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
-                  <p className="text-gray-600">{item.description}</p>
-                </div>
-                {index < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                    <ArrowRight className="w-8 h-8 text-emerald-300" />
+          {/* How it works */}
+          <div className="mt-12 sm:mt-24">
+            <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-12">Cara Mendaftar</h2>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8">
+              {[
+                { step: "1", label: "Masuk dengan Google" },
+                { step: "2", label: "Isi data bisnis" },
+                { step: "3", label: "Selesai!" },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 sm:gap-4">
+                  <div className="flex items-center gap-2.5 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/20">
+                      {item.step}
+                    </div>
+                    <span className="text-gray-300 text-sm sm:text-base">{item.label}</span>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 gradient-bg">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            Siap Mengembangkan Bisnis Anda?
-          </h2>
-          <p className="text-lg text-emerald-100 mb-8">
-            Bergabunglah dengan ratusan UMKM lainnya yang sudah merasakan manfaat tampil di Bursa.
-          </p>
-          <Link 
-            href="/signup" 
-            className="inline-flex items-center gap-2 bg-white text-emerald-600 px-8 py-4 rounded-xl font-semibold text-lg hover:bg-emerald-50 transition-colors shadow-lg hover:shadow-xl"
-          >
-            Daftarkan Bisnis Sekarang
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                <Store className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-white text-lg">Bursa</span>
+                  {i < 2 && (
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 hidden sm:block" />
+                  )}
+                </div>
+              ))}
             </div>
-            <p className="text-sm">
-              © 2026 Bursa UMKM. Platform untuk UMKM Indonesia.
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-white/5 mt-12 sm:mt-20">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+            <span className="font-bold text-lg bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Bursa</span>
+            <p className="text-xs sm:text-sm text-gray-500">
+              © 2026 Bursa. Platform untuk bisnis Indonesia.
             </p>
           </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }

@@ -48,6 +48,8 @@ export interface BusinessSubmission {
   longitude: number;
   phoneNumber: string;
   whatsappNumber?: string;
+  // Operating hours
+  operatingHours?: Record<string, { open: string; close: string; closed: boolean }>;
   // Social media
   instagramHandle?: string;
   tiktokHandle?: string;

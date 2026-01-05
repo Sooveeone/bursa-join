@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
-import { Store, ArrowLeft, Loader2, Shield, Zap, CheckCircle } from "lucide-react";
+import { ArrowLeft, Loader2, Shield, Zap, CheckCircle } from "lucide-react";
 
 export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
@@ -32,41 +32,44 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          {/* Back Link */}
-          <Link 
-            href="/" 
-            className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-8 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Kembali ke beranda
-          </Link>
+    <div className="min-h-screen bg-[#0a0f0d] text-white relative overflow-hidden flex items-center justify-center">
+      {/* Background glow effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-600/15 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[120px]" />
+        <div className="absolute top-0 right-0 w-[300px] h-[400px] bg-teal-600/10 rounded-full blur-[100px]" />
+      </div>
 
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-md mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        {/* Back Link */}
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 sm:mb-10 transition-colors text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Kembali
+        </Link>
+
+        {/* Card */}
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-2xl p-5 sm:p-8 shadow-2xl">
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Store className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Bursa</h1>
-              <p className="text-sm text-gray-500">Platform UMKM Indonesia</p>
-            </div>
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Bursa</h1>
+            <p className="text-xs text-gray-500 mt-1">Platform Bisnis Indonesia</p>
           </div>
 
           {/* Title */}
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold mb-2">
             Daftarkan Bisnis Anda
           </h2>
-          <p className="text-gray-600 mb-8">
-            Masuk dengan Google untuk mendaftarkan bisnis UMKM Anda. Proses cepat dan mudah!
+          <p className="text-gray-400 text-sm mb-6 sm:mb-8">
+            Masuk dengan Google untuk mendaftarkan bisnis Anda.
           </p>
 
           {/* Error Message */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+            <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm">
               {error}
             </div>
           )}
@@ -75,7 +78,7 @@ export default function SignUpPage() {
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-200 text-gray-700 px-6 py-4 rounded-xl font-medium hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 px-5 sm:px-6 py-3.5 sm:py-4 rounded-xl font-medium hover:bg-gray-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg text-sm sm:text-base"
           >
             {loading ? (
               <>
@@ -84,7 +87,7 @@ export default function SignUpPage() {
               </>
             ) : (
               <>
-                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -102,66 +105,26 @@ export default function SignUpPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <span className="text-lg">Lanjutkan dengan Google</span>
+                <span>Lanjutkan dengan Google</span>
               </>
             )}
           </button>
 
           {/* Benefits */}
-          <div className="mt-8 space-y-3">
-            <div className="flex items-center gap-3 text-sm text-gray-600">
-              <Zap className="w-5 h-5 text-emerald-500" />
-              <span>Satu klik, tanpa perlu buat password</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-gray-600">
-              <Shield className="w-5 h-5 text-emerald-500" />
-              <span>Aman dengan keamanan Google</span>
-            </div>
-            <div className="flex items-center gap-3 text-sm text-gray-600">
-              <CheckCircle className="w-5 h-5 text-emerald-500" />
-              <span>Email otomatis terverifikasi</span>
-            </div>
-          </div>
-
-          {/* Privacy Note */}
-          <p className="mt-8 text-xs text-gray-400 text-center">
-            Dengan melanjutkan, Anda menyetujui{" "}
-            <a href="#" className="text-emerald-600 hover:underline">Syarat & Ketentuan</a>
-            {" "}dan{" "}
-            <a href="#" className="text-emerald-600 hover:underline">Kebijakan Privasi</a>
-            {" "}kami.
-          </p>
-        </div>
-      </div>
-
-      {/* Right Side - Decorative */}
-      <div className="hidden lg:flex flex-1 gradient-bg items-center justify-center p-12">
-        <div className="text-white max-w-md">
-          <h2 className="text-4xl font-bold mb-6">
-            Tingkatkan Visibilitas Bisnis Anda
-          </h2>
-          <p className="text-emerald-100 text-lg mb-8">
-            Bergabung dengan Bursa dan jadikan bisnis Anda mudah ditemukan oleh ribuan pelanggan potensial di seluruh Indonesia.
-          </p>
-          
-          <div className="space-y-4">
+          <div className="mt-6 sm:mt-8 space-y-2.5 sm:space-y-3">
             {[
-              "Tampil di peta interaktif",
-              "Gratis selamanya",
-              "Review dalam 24 jam",
-              "Dukungan tim Bursa",
+              { icon: Zap, text: "Satu klik, tanpa password" },
+              { icon: Shield, text: "Aman dengan keamanan Google" },
+              { icon: CheckCircle, text: "Email otomatis terverifikasi" },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <span className="text-emerald-50">{item}</span>
+              <div key={i} className="flex items-center gap-2.5 sm:gap-3 text-xs sm:text-sm text-gray-400">
+                <item.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 flex-shrink-0" />
+                <span>{item.text}</span>
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );

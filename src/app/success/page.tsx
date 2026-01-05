@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Store, CheckCircle, Clock, Bell, MapPin, ArrowRight, Sparkles } from "lucide-react";
+import { CheckCircle, Clock, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
 
 export default function SuccessPage() {
@@ -25,7 +25,6 @@ export default function SuccessPage() {
 
       const particleCount = 50 * (timeLeft / duration);
 
-      // Confetti from left
       confetti({
         particleCount,
         startVelocity: 30,
@@ -37,7 +36,6 @@ export default function SuccessPage() {
         colors: ["#10b981", "#059669", "#34d399", "#6ee7b7"],
       });
 
-      // Confetti from right
       confetti({
         particleCount,
         startVelocity: 30,
@@ -54,132 +52,75 @@ export default function SuccessPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <Link href="/" className="flex items-center gap-2 w-fit">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
-              <Store className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900">Bursa</span>
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#0a0f0d] text-white relative overflow-hidden flex items-center justify-center">
+      {/* Background glow effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-emerald-600/15 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[120px]" />
+        <div className="absolute top-0 right-0 w-[300px] h-[400px] bg-teal-600/10 rounded-full blur-[100px]" />
+      </div>
 
-      <main className="max-w-2xl mx-auto px-4 py-16">
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-md mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {/* Success Icon */}
         <div className="text-center mb-8 animate-fade-in">
           <div className="relative inline-block">
-            <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle className="w-12 h-12 text-emerald-600" />
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-emerald-500/20 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-emerald-400" />
             </div>
-            <div className="absolute -top-2 -right-2">
-              <Sparkles className="w-8 h-8 text-amber-400" />
+            <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-amber-400" />
             </div>
           </div>
         </div>
 
         {/* Title */}
-        <div className="text-center mb-12 animate-fade-in-delay-1">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 animate-fade-in-delay-1">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-3">
             Pendaftaran Berhasil!
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-gray-400 text-sm sm:text-base">
             Terima kasih telah mendaftarkan bisnis Anda di Bursa.
-            <br />
-            Tim kami akan segera meninjau pendaftaran Anda.
           </p>
         </div>
 
         {/* Status Card */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-8 animate-fade-in-delay-2">
-          <div className="bg-amber-50 border-b border-amber-100 px-6 py-4 flex items-center gap-3">
-            <Clock className="w-5 h-5 text-amber-600" />
+        <div className="bg-white/[0.03] backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden mb-8 animate-fade-in-delay-2">
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-3">
+            <Clock className="w-5 h-5 text-amber-400" />
             <div>
-              <span className="font-semibold text-amber-800">Status: Menunggu Review</span>
-              <p className="text-sm text-amber-600">Estimasi waktu: 24 jam</p>
+              <span className="font-semibold text-amber-400 text-sm sm:text-base">Menunggu Review</span>
             </div>
           </div>
           
-          <div className="p-6">
-            <h2 className="font-semibold text-gray-900 mb-4">Apa yang terjadi selanjutnya?</h2>
-            
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <span className="text-emerald-600 font-bold">1</span>
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Tim kami meninjau data bisnis Anda</h3>
-                  <p className="text-sm text-gray-500">Kami akan memeriksa kelengkapan dan keakuratan informasi</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <Bell className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Anda menerima notifikasi email</h3>
-                  <p className="text-sm text-gray-500">Kami akan memberitahu status pendaftaran via email</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <MapPin className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Bisnis Anda tampil di peta Bursa</h3>
-                  <p className="text-sm text-gray-500">Setelah disetujui, pelanggan dapat menemukan bisnis Anda</p>
-                </div>
-              </div>
-            </div>
+          <div className="p-4 sm:p-6">
+            <p className="text-gray-400 text-sm">
+              Tim kami akan meninjau pendaftaran Anda.
+            </p>
           </div>
         </div>
 
-        {/* Tips Card */}
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-6 text-white mb-8 animate-fade-in-delay-3">
-          <h3 className="font-semibold mb-2">💡 Tips untuk meningkatkan visibilitas</h3>
-          <ul className="text-sm text-emerald-100 space-y-1">
-            <li>• Pastikan foto bisnis Anda menarik dan berkualitas</li>
-            <li>• Lengkapi informasi jam operasional</li>
-            <li>• Respon cepat pesan dari pelanggan</li>
-            <li>• Minta pelanggan memberikan ulasan</li>
-          </ul>
-        </div>
-
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-delay-3">
+        <div className="flex flex-col gap-3 animate-fade-in-delay-3">
           <Link 
             href="/"
-            className="btn-secondary text-center"
+            className="w-full text-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-medium rounded-xl hover:from-emerald-400 hover:to-emerald-500 transition-all shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40"
           >
             Kembali ke Beranda
           </Link>
-          <a 
-            href="https://bursa.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary inline-flex items-center justify-center gap-2"
-          >
-            Kunjungi Bursa
-            <ArrowRight className="w-5 h-5" />
-          </a>
         </div>
 
         {/* Share Section */}
-        <div className="text-center mt-12 pt-8 border-t border-gray-200">
-          <p className="text-gray-500 text-sm mb-4">
-            Punya teman yang juga punya UMKM? Ajak mereka bergabung!
+        <div className="text-center mt-10 pt-6 border-t border-white/5">
+          <p className="text-gray-500 text-xs sm:text-sm mb-3">
+            Punya teman yang juga punya bisnis?
           </p>
           <button
             onClick={() => {
               if (navigator.share) {
                 navigator.share({
                   title: "Daftar Bisnis di Bursa",
-                  text: "Daftarkan bisnis UMKM kamu di Bursa dan jangkau lebih banyak pelanggan!",
+                  text: "Daftarkan bisnis kamu di Bursa dan jangkau lebih banyak pelanggan!",
                   url: window.location.origin,
                 });
               } else {
@@ -187,13 +128,12 @@ export default function SuccessPage() {
                 alert("Link berhasil disalin!");
               }
             }}
-            className="text-emerald-600 font-medium hover:text-emerald-700"
+            className="text-emerald-400 font-medium hover:text-emerald-300 transition-colors text-sm"
           >
             Bagikan Link Pendaftaran →
           </button>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
-
