@@ -10,8 +10,9 @@ export interface Category {
 // Hardcoded categories - no API call needed!
 export const CATEGORIES: Category[] = [
   { id: "food-beverage", name: "Makanan & Minuman", slug: "food-beverage", icon: "🍜" },
-  { id: "retail-fashion", name: "Retail & Fashion", slug: "retail-fashion", icon: "👗" },
-  { id: "services", name: "Jasa & Layanan", slug: "services", icon: "✂️" },
+  { id: "grocery-convenience", name: "Toko Kelontong & Kebutuhan", slug: "grocery-convenience", icon: "🛒" },
+  { id: "retail-fashion", name: "Retail & Fashion", slug: "retail-fashion", icon: "🛍️" },
+  { id: "services", name: "Jasa & Layanan", slug: "services", icon: "🤲" },
   { id: "handicrafts-souvenirs", name: "Kerajinan & Souvenir", slug: "handicrafts-souvenirs", icon: "🎨" },
   { id: "agriculture-fresh-produce", name: "Pertanian & Produk Segar", slug: "agriculture-fresh-produce", icon: "🌾" },
   { id: "health-beauty", name: "Kesehatan & Kecantikan", slug: "health-beauty", icon: "💆" },
