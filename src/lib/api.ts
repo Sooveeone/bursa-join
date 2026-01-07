@@ -40,7 +40,6 @@ export interface BusinessSubmission {
   name: string;
   description: string;
   ownerName: string;
-  businessSize: "MICRO" | "SMALL" | "MEDIUM";
   categorySlug: string;
   address: string;
   city: string;

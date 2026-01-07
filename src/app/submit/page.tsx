@@ -29,17 +29,10 @@ const LocationPicker = dynamicImport(
   }
 );
 
-const BUSINESS_SIZES = [
-  { value: "MICRO", label: "Usaha Mikro", description: "< Rp 300 jt/thn" },
-  { value: "SMALL", label: "Usaha Kecil", description: "Rp 300 jt - 2.5 M/thn" },
-  { value: "MEDIUM", label: "Usaha Menengah", description: "Rp 2.5 - 50 M/thn" },
-] as const;
-
 interface FormData {
   name: string;
   description: string;
   ownerName: string;
-  businessSize: "MICRO" | "SMALL" | "MEDIUM";
   categorySlug: string;
   address: string;
   city: string;
@@ -73,7 +66,6 @@ export default function SubmitPage() {
     name: "",
     description: "",
     ownerName: "",
-    businessSize: "MICRO",
     categorySlug: "",
     address: "",
     city: "",
@@ -224,7 +216,6 @@ export default function SubmitPage() {
         name: formData.name,
         description: formData.description,
         ownerName: formData.ownerName,
-        businessSize: formData.businessSize,
         categorySlug: formData.categorySlug,
         address: formData.address,
         city: formData.city,
@@ -390,38 +381,18 @@ export default function SubmitPage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
-                          Nama Pemilik <span className="text-emerald-400">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="ownerName"
-                          value={formData.ownerName}
-                          onChange={handleChange}
-                          placeholder="Nama Anda"
-                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
-                          Skala Usaha
-                        </label>
-                        <select
-                          name="businessSize"
-                          value={formData.businessSize}
-                          onChange={handleChange}
-                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all appearance-none cursor-pointer"
-                        >
-                          {BUSINESS_SIZES.map((size) => (
-                            <option key={size.value} value={size.value} className="bg-[#1a1f1d] text-white">
-                              {size.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                    <div>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                        Nama Pemilik <span className="text-emerald-400">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="ownerName"
+                        value={formData.ownerName}
+                        onChange={handleChange}
+                        placeholder="Nama Anda"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
+                      />
                     </div>
 
                     <div>
