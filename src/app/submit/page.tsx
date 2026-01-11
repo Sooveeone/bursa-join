@@ -8,7 +8,7 @@ import { CATEGORIES, checkSubmissionStatus, submitBusiness } from "@/lib/api";
 import { 
   User, Mail, LogOut, MapPin, Phone,
   Instagram, ArrowRight, ArrowLeft, Loader2, CheckCircle,
-  AlertCircle, Building2, Image as ImageIcon
+  AlertCircle, Building2, Image as ImageIcon, Globe
 } from "lucide-react";
 import dynamicImport from "next/dynamic";
 import ImageUploader from "@/components/ImageUploader";
@@ -34,13 +34,16 @@ interface FormData {
   description: string;
   ownerName: string;
   categorySlug: string;
+  isOnlineBusiness: boolean;
   address: string;
   city: string;
   district: string;
+  postalCode: string;
   latitude: number | null;
   longitude: number | null;
   phoneNumber: string;
   whatsappNumber: string;
+  website: string;
   operatingHours: OperatingHours;
   instagramHandle: string;
   tiktokHandle: string;
@@ -67,13 +70,16 @@ export default function SubmitPage() {
     description: "",
     ownerName: "",
     categorySlug: "",
+    isOnlineBusiness: false,
     address: "",
     city: "",
     district: "",
+    postalCode: "",
     latitude: null,
     longitude: null,
     phoneNumber: "",
     whatsappNumber: "",
+    website: "",
     operatingHours: getDefaultOperatingHours(),
     instagramHandle: "",
     tiktokHandle: "",
@@ -94,7 +100,8 @@ export default function SubmitPage() {
 
         const status = await checkSubmissionStatus(session.access_token);
         
-        if (status.hasSubmission) {
+        // If user can't submit more businesses, redirect to dashboard
+        if (!status.canSubmitMore) {
           router.push("/already-submitted");
           return;
         }
@@ -151,17 +158,20 @@ export default function SubmitPage() {
       }
     }
     if (stepNum === 2) {
-      if (!formData.address.trim()) {
-        setError("Alamat wajib diisi");
-        return false;
-      }
-      if (!formData.city.trim()) {
-        setError("Kota wajib diisi");
-        return false;
-      }
-      if (formData.latitude === null || formData.longitude === null) {
-        setError("Lokasi di peta wajib dipilih");
-        return false;
+      // Location validation only for physical (non-online) businesses
+      if (!formData.isOnlineBusiness) {
+        if (!formData.address.trim()) {
+          setError("Alamat wajib diisi");
+          return false;
+        }
+        if (!formData.city.trim()) {
+          setError("Kota wajib diisi");
+          return false;
+        }
+        if (formData.latitude === null || formData.longitude === null) {
+          setError("Lokasi di peta wajib dipilih");
+          return false;
+        }
       }
     }
     if (stepNum === 3) {
@@ -217,13 +227,17 @@ export default function SubmitPage() {
         description: formData.description,
         ownerName: formData.ownerName,
         categorySlug: formData.categorySlug,
-        address: formData.address,
-        city: formData.city,
+        isOnlineBusiness: formData.isOnlineBusiness,
+        // Location fields - only include if not an online business
+        address: formData.isOnlineBusiness ? undefined : formData.address,
+        city: formData.isOnlineBusiness ? undefined : formData.city,
         district: formData.district || undefined,
-        latitude: formData.latitude!,
-        longitude: formData.longitude!,
+        postalCode: formData.postalCode || undefined,
+        latitude: formData.isOnlineBusiness ? undefined : formData.latitude!,
+        longitude: formData.isOnlineBusiness ? undefined : formData.longitude!,
         phoneNumber: formData.phoneNumber,
         whatsappNumber: formData.whatsappNumber || undefined,
+        website: formData.website || undefined,
         operatingHours: formData.operatingHours,
         instagramHandle: formData.instagramHandle || undefined,
         tiktokHandle: formData.tiktokHandle || undefined,
@@ -343,7 +357,7 @@ export default function SubmitPage() {
                 </h1>
                 <p className="text-gray-400 text-xs sm:text-sm mt-1">
                   {step === 1 && "Ceritakan tentang bisnis Anda"}
-                  {step === 2 && "Dimana lokasi bisnis Anda?"}
+                  {step === 2 && (formData.isOnlineBusiness ? "Bisnis online tidak memerlukan lokasi" : "Dimana lokasi bisnis Anda?")}
                   {step === 3 && "Bagaimana pelanggan menghubungi Anda?"}
                   {step === 4 && "Tambahkan foto dan sosial media"}
                 </p>
@@ -413,78 +427,135 @@ export default function SubmitPage() {
                         ))}
                       </select>
                     </div>
+
+                    {/* Online Business Toggle */}
+                    <div className="bg-white/[0.02] border border-white/10 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                      <label className="flex items-start gap-3 cursor-pointer">
+                        <div className="relative flex-shrink-0 mt-0.5">
+                          <input
+                            type="checkbox"
+                            checked={formData.isOnlineBusiness}
+                            onChange={(e) => setFormData(prev => ({ ...prev, isOnlineBusiness: e.target.checked }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-10 h-6 bg-white/10 rounded-full peer-checked:bg-emerald-500 transition-colors" />
+                          <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 text-sm font-medium text-gray-200">
+                            <Globe className="w-4 h-4 text-emerald-400" />
+                            Bisnis Online
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Aktifkan jika bisnis Anda beroperasi secara online sepenuhnya tanpa lokasi fisik
+                          </p>
+                        </div>
+                      </label>
+                    </div>
                   </div>
                 )}
 
                 {/* Step 2: Location */}
                 {step === 2 && (
                   <div className="space-y-4 sm:space-y-5 animate-fade-in">
-                    <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
-                        Alamat Lengkap <span className="text-emerald-400">*</span>
-                      </label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-3 sm:left-3.5 sm:top-3.5 w-4 h-4 text-gray-500" />
-                        <input
-                          type="text"
-                          name="address"
-                          value={formData.address}
-                          onChange={handleChange}
-                          placeholder="Jl. Contoh No. 123"
-                          className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
-                          Kota/Kabupaten <span className="text-emerald-400">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          placeholder="Jakarta Selatan"
-                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
-                          Kecamatan
-                        </label>
-                        <input
-                          type="text"
-                          name="district"
-                          value={formData.district}
-                          onChange={handleChange}
-                          placeholder="Kebayoran Baru"
-                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
-                        Lokasi di Peta <span className="text-emerald-400">*</span>
-                      </label>
-                      <p className="text-[10px] sm:text-xs text-gray-500 mb-2 sm:mb-3">
-                        Klik pada peta untuk menentukan lokasi
-                      </p>
-                      <LocationPicker
-                        latitude={formData.latitude}
-                        longitude={formData.longitude}
-                        onLocationChange={handleLocationChange}
-                      />
-                      {formData.latitude && formData.longitude && (
-                        <p className="text-[10px] sm:text-xs text-emerald-400 mt-2 flex items-center gap-1.5">
-                          <CheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                          Lokasi dipilih
+                    {formData.isOnlineBusiness ? (
+                      /* Online Business - No location required */
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-emerald-500/10 rounded-full flex items-center justify-center">
+                          <Globe className="w-8 h-8 text-emerald-400" />
+                        </div>
+                        <h3 className="text-lg font-medium text-white mb-2">Bisnis Online</h3>
+                        <p className="text-sm text-gray-400 max-w-sm mx-auto">
+                          Karena bisnis Anda si secara online, tidak perlu menambahkan lokasi fisik. 
+                          Lanjutkan ke langkah berikutnya.
                         </p>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      /* Physical Business - Location required */
+                      <>
+                        <div>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                            Alamat Lengkap <span className="text-emerald-400">*</span>
+                          </label>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-3 sm:left-3.5 sm:top-3.5 w-4 h-4 text-gray-500" />
+                            <input
+                              type="text"
+                              name="address"
+                              value={formData.address}
+                              onChange={handleChange}
+                              placeholder="Jl. Sudirman No. 52, Mall Grand Indonesia Lt. 3, Unit 3A"
+                              className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                          <div>
+                            <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                              Kota/Kabupaten <span className="text-emerald-400">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="city"
+                              value={formData.city}
+                              onChange={handleChange}
+                              placeholder="Jakarta Selatan"
+                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                              Kecamatan
+                            </label>
+                            <input
+                              type="text"
+                              name="district"
+                              value={formData.district}
+                              onChange={handleChange}
+                              placeholder="Kebayoran Baru"
+                              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                            Kode Pos
+                          </label>
+                          <input
+                            type="text"
+                            name="postalCode"
+                            value={formData.postalCode}
+                            onChange={handleChange}
+                            placeholder="12190"
+                            maxLength={5}
+                            className="w-full sm:w-32 px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                            Lokasi di Peta <span className="text-emerald-400">*</span>
+                          </label>
+                          <p className="text-[10px] sm:text-xs text-gray-500 mb-2 sm:mb-3">
+                            Pilih lokasi bisnis Anda dengan tepat agar pelanggan dapat menemukan Anda
+                          </p>
+                          <LocationPicker
+                            latitude={formData.latitude}
+                            longitude={formData.longitude}
+                            onLocationChange={handleLocationChange}
+                          />
+                          {formData.latitude && formData.longitude && (
+                            <p className="text-[10px] sm:text-xs text-emerald-400 mt-2 flex items-center gap-1.5">
+                              <CheckCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                              Lokasi dipilih
+                            </p>
+                          )}
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
 
@@ -522,6 +593,23 @@ export default function SubmitPage() {
                           value={formData.whatsappNumber}
                           onChange={handleChange}
                           placeholder="Kosongkan jika sama"
+                          className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                        Website
+                      </label>
+                      <div className="relative">
+                        <Globe className="absolute left-3 sm:left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <input
+                          type="url"
+                          name="website"
+                          value={formData.website}
+                          onChange={handleChange}
+                          placeholder="https://www.bisnisanda.com"
                           className="w-full pl-9 sm:pl-10 pr-3 sm:pr-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm placeholder-gray-500 focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all"
                         />
                       </div>
@@ -619,7 +707,14 @@ export default function SubmitPage() {
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500">Lokasi</span>
-                          <span className="text-white">{formData.city}</span>
+                          <span className="text-white">
+                            {formData.isOnlineBusiness ? (
+                              <span className="flex items-center gap-1">
+                                <Globe className="w-3 h-3" />
+                                Online
+                              </span>
+                            ) : formData.city || "-"}
+                          </span>
                         </div>
                       </div>
                     </div>

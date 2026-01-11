@@ -4,22 +4,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
-import { checkSubmissionStatus } from "@/lib/api";
-import { Store, CheckCircle, Clock, XCircle, ArrowRight, Loader2, LogOut } from "lucide-react";
+import { checkSubmissionStatus, Submission } from "@/lib/api";
+import { Store, CheckCircle, Clock, XCircle, Loader2, LogOut, Plus, Globe } from "lucide-react";
 
-interface Submission {
-  id: string;
-  name: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
-  createdAt: string;
-}
+const MAX_BUSINESSES = 5;
 
-export default function AlreadySubmittedPage() {
+export default function MyBusinessesPage() {
   const router = useRouter();
   const supabase = createClient();
   
   const [loading, setLoading] = useState(true);
-  const [submission, setSubmission] = useState<Submission | null>(null);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [canSubmitMore, setCanSubmitMore] = useState(false);
+  const [remainingSlots, setRemainingSlots] = useState(0);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
     async function checkStatus() {
@@ -33,12 +31,16 @@ export default function AlreadySubmittedPage() {
 
         const status = await checkSubmissionStatus(session.access_token);
         
-        if (!status.hasSubmission) {
+        // If user has no submissions, redirect to submit page
+        if (status.submissions.length === 0) {
           router.push("/submit");
           return;
         }
 
-        setSubmission(status.submission);
+        setSubmissions(status.submissions);
+        setCanSubmitMore(status.canSubmitMore);
+        setRemainingSlots(status.remainingSlots);
+        setUserEmail(status.user.email);
         setLoading(false);
       } catch (err) {
         console.error("Error:", err);
@@ -56,10 +58,13 @@ export default function AlreadySubmittedPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
-          <p className="text-gray-600">Memuat...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0f0d]">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-[120px]" />
+        </div>
+        <div className="relative flex flex-col items-center gap-4">
+          <Loader2 className="w-10 h-10 animate-spin text-emerald-400" />
+          <p className="text-gray-400 text-sm">Memuat...</p>
         </div>
       </div>
     );
@@ -68,181 +73,175 @@ export default function AlreadySubmittedPage() {
   const statusConfig = {
     PENDING: {
       icon: Clock,
-      color: "amber",
-      bgColor: "bg-amber-50",
-      borderColor: "border-amber-200",
-      iconColor: "text-amber-500",
+      bgColor: "bg-amber-500/10",
+      borderColor: "border-amber-500/20",
+      iconColor: "text-amber-400",
+      badgeBg: "bg-amber-500/20",
+      badgeText: "text-amber-400",
       title: "Sedang Ditinjau",
-      description: "Bisnis Anda sedang dalam proses review oleh tim kami. Biasanya membutuhkan waktu 24 jam.",
     },
     APPROVED: {
       icon: CheckCircle,
-      color: "emerald",
-      bgColor: "bg-emerald-50",
-      borderColor: "border-emerald-200",
-      iconColor: "text-emerald-500",
+      bgColor: "bg-emerald-500/10",
+      borderColor: "border-emerald-500/20",
+      iconColor: "text-emerald-400",
+      badgeBg: "bg-emerald-500/20",
+      badgeText: "text-emerald-400",
       title: "Disetujui",
-      description: "Selamat! Bisnis Anda sudah tampil di peta Bursa dan dapat ditemukan oleh pelanggan.",
     },
     REJECTED: {
       icon: XCircle,
-      color: "red",
-      bgColor: "bg-red-50",
-      borderColor: "border-red-200",
-      iconColor: "text-red-500",
+      bgColor: "bg-red-500/10",
+      borderColor: "border-red-500/20",
+      iconColor: "text-red-400",
+      badgeBg: "bg-red-500/20",
+      badgeText: "text-red-400",
       title: "Ditolak",
-      description: "Maaf, pendaftaran bisnis Anda tidak dapat disetujui. Silakan hubungi tim kami untuk informasi lebih lanjut.",
     },
   };
 
-  const config = submission ? statusConfig[submission.status] : statusConfig.PENDING;
-  const StatusIcon = config.icon;
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
-              <Store className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900">Bursa</span>
-          </Link>
-          
-          <button
-            onClick={handleSignOut}
-            className="text-gray-500 hover:text-gray-700 flex items-center gap-2 text-sm"
-          >
-            <LogOut className="w-4 h-4" />
-            Keluar
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#0a0f0d] text-white relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-emerald-600/15 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[120px]" />
+      </div>
 
-      <main className="max-w-2xl mx-auto px-4 py-16">
-        <div className="text-center mb-8">
-          <div className={`w-20 h-20 mx-auto mb-6 rounded-full ${config.bgColor} flex items-center justify-center`}>
-            <StatusIcon className={`w-10 h-10 ${config.iconColor}`} />
-          </div>
-          
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Anda Sudah Mendaftar
-          </h1>
-          <p className="text-gray-600">
-            Anda sudah mendaftarkan bisnis di Bursa
-          </p>
-        </div>
-
-        {submission && (
-          <div className={`${config.bgColor} border ${config.borderColor} rounded-2xl p-6 mb-8`}>
-            <div className="flex items-start gap-4">
-              <div className={`w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0`}>
-                <Store className={`w-6 h-6 ${config.iconColor}`} />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold text-gray-900 mb-1">
-                  {submission.name}
-                </h2>
-                <div className="flex items-center gap-2 mb-3">
-                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${config.bgColor} ${config.iconColor}`}>
-                    <StatusIcon className="w-3 h-3" />
-                    {config.title}
-                  </span>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  {config.description}
-                </p>
-                <p className="text-gray-400 text-xs mt-3">
-                  Didaftarkan pada: {new Date(submission.createdAt).toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-              </div>
+      {/* Content */}
+      <div className="relative z-10 min-h-screen flex flex-col">
+        {/* Header */}
+        <header className="border-b border-white/5 backdrop-blur-xl bg-black/20">
+          <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <Link href="/" className="font-bold text-xl bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+              Bursa
+            </Link>
+            
+            <div className="flex items-center gap-3">
+              {userEmail && (
+                <span className="hidden sm:block text-sm text-gray-400">{userEmail}</span>
+              )}
+              <button
+                onClick={handleSignOut}
+                className="text-gray-400 hover:text-white flex items-center gap-2 text-sm transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
             </div>
           </div>
-        )}
+        </header>
 
-        {/* What's Next */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <h3 className="font-semibold text-gray-900 mb-4">Apa selanjutnya?</h3>
-          
+        <main className="flex-1 max-w-4xl mx-auto px-4 py-8 w-full">
+          {/* Page Title */}
+          <div className="mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+              Bisnis Saya
+            </h1>
+            <p className="text-gray-400">
+              {submissions.length} dari {MAX_BUSINESSES} bisnis terdaftar
+              {canSubmitMore && (
+                <span className="text-emerald-400"> • {remainingSlots} slot tersisa</span>
+              )}
+            </p>
+          </div>
+
+          {/* Add New Business Button */}
+          {canSubmitMore && (
+            <Link
+              href="/submit"
+              className="mb-6 flex items-center justify-center gap-2 w-full py-4 border-2 border-dashed border-white/10 rounded-xl text-gray-400 hover:border-emerald-500/50 hover:text-emerald-400 hover:bg-emerald-500/5 transition-all group"
+            >
+              <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span className="font-medium">Daftarkan Bisnis Baru</span>
+            </Link>
+          )}
+
+          {/* Business List */}
           <div className="space-y-4">
-            {submission?.status === "PENDING" && (
-              <>
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-emerald-600 text-xs font-bold">1</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">Tim kami akan meninjau pendaftaran Anda</p>
-                    <p className="text-sm text-gray-500">Proses review biasanya membutuhkan waktu 24 jam</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-emerald-600 text-xs font-bold">2</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">Anda akan menerima notifikasi via email</p>
-                    <p className="text-sm text-gray-500">Kami akan memberitahu setelah bisnis Anda disetujui</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-emerald-600 text-xs font-bold">3</span>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">Bisnis Anda akan tampil di peta Bursa</p>
-                    <p className="text-sm text-gray-500">Pelanggan dapat mulai menemukan bisnis Anda</p>
-                  </div>
-                </div>
-              </>
-            )}
+            {submissions.map((submission) => {
+              const config = statusConfig[submission.status];
+              const StatusIcon = config.icon;
 
-            {submission?.status === "APPROVED" && (
-              <div className="text-center py-4">
-                <p className="text-gray-600 mb-4">
-                  Bisnis Anda sudah aktif di Bursa! Pelanggan sekarang dapat menemukan Anda di peta.
-                </p>
-                <a
-                  href="https://bursa.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary inline-flex items-center gap-2"
+              return (
+                <div
+                  key={submission.id}
+                  className={`${config.bgColor} border ${config.borderColor} rounded-xl p-4 sm:p-5 backdrop-blur-sm`}
                 >
-                  Lihat di Bursa
-                  <ArrowRight className="w-5 h-5" />
-                </a>
-              </div>
-            )}
+                  <div className="flex items-start gap-4">
+                    <div className={`w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0`}>
+                      {submission.isOnlineBusiness ? (
+                        <Globe className={`w-6 h-6 ${config.iconColor}`} />
+                      ) : (
+                        <Store className={`w-6 h-6 ${config.iconColor}`} />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                        <h2 className="text-lg font-semibold text-white truncate">
+                          {submission.name}
+                        </h2>
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${config.badgeBg} ${config.badgeText} w-fit`}>
+                          <StatusIcon className="w-3 h-3" />
+                          {config.title}
+                        </span>
+                      </div>
+                      
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-400">
+                        {submission.isOnlineBusiness && (
+                          <span className="flex items-center gap-1">
+                            <Globe className="w-3.5 h-3.5" />
+                            Bisnis Online
+                          </span>
+                        )}
+                        <span>
+                          Didaftarkan: {new Date(submission.createdAt).toLocaleDateString("id-ID", {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
 
-            {submission?.status === "REJECTED" && (
-              <div className="text-center py-4">
-                <p className="text-gray-600 mb-4">
-                  Jika Anda merasa ini adalah kesalahan atau ingin informasi lebih lanjut, silakan hubungi tim kami.
-                </p>
-                <a
-                  href="mailto:support@bursa.app"
-                  className="btn-secondary inline-flex items-center gap-2"
-                >
-                  Hubungi Support
-                </a>
-              </div>
-            )}
+                      {/* Status-specific message */}
+                      {submission.status === "PENDING" && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          Sedang dalam proses review.
+                        </p>
+                      )}
+                      {submission.status === "REJECTED" && (
+                        <p className="text-xs text-red-400/80 mt-2">
+                          Pendaftaran tidak disetujui. Hubungi bursa.app.id@gmail.com untuk informasi lebih lanjut.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>
 
-        {/* Back to Home */}
-        <div className="text-center mt-8">
-          <Link href="/" className="text-gray-500 hover:text-gray-700 text-sm">
-            ← Kembali ke beranda
-          </Link>
-        </div>
-      </main>
+          {/* Limit Reached Message */}
+          {!canSubmitMore && (
+            <div className="mt-8 p-4 bg-white/5 border border-white/10 rounded-xl text-center">
+              <p className="text-gray-400 text-sm">
+                Anda telah mencapai batas maksimal {MAX_BUSINESSES} bisnis per akun.
+              </p>
+            </div>
+          )}
+
+          {/* Help Section */}
+          <div className="mt-8 p-4 bg-white/[0.02] border border-white/5 rounded-xl">
+            <h3 className="font-medium text-gray-300 mb-2">Butuh bantuan?</h3>
+            <p className="text-sm text-gray-500">
+              Hubungi tim kami di{" "}
+              <a href="mailto:bursa.app.id@gmail.com" className="text-emerald-400 hover:underline">
+                bursa.app.id@gmail.com
+              </a>
+              {" "}jika Anda memiliki pertanyaan tentang bisnis Anda.
+            </p>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
-
