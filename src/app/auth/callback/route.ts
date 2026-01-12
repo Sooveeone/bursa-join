@@ -6,7 +6,13 @@ import type { NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/submit";
+  
+  // Validate the 'next' parameter to prevent open redirects
+  // Only allow internal paths (starting with /) and not protocol-relative URLs (//)
+  let next = searchParams.get("next") ?? "/submit";
+  if (!next.startsWith("/") || next.startsWith("//")) {
+    next = "/submit";
+  }
 
   if (code) {
     const cookieStore = await cookies();

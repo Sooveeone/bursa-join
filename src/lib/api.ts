@@ -7,6 +7,16 @@ export interface Category {
   icon: string;
 }
 
+// Price tiers - keep in sync with bursa main app PriceRange enum
+export const PRICE_TIERS = [
+  { value: "BUDGET", label: "$", name: "Murah" },
+  { value: "MODERATE", label: "$$", name: "Menengah" },
+  { value: "PRICEY", label: "$$$", name: "Mahal" },
+  { value: "PREMIUM", label: "$$$$", name: "Premium" },
+] as const;
+
+export type PriceTier = typeof PRICE_TIERS[number]["value"];
+
 // Hardcoded categories - keep in sync with bursa main app
 export const CATEGORIES: Category[] = [
   { id: "food-beverage", name: "Makanan & Minuman", slug: "food-beverage", icon: "🍜" },
@@ -49,6 +59,9 @@ export interface BusinessSubmission {
   description: string;
   ownerName: string;
   categorySlug: string;
+  // Price range
+  priceRangeMin?: PriceTier;
+  priceRangeMax?: PriceTier;
   // Online business flag
   isOnlineBusiness: boolean;
   // Location fields - optional for online businesses

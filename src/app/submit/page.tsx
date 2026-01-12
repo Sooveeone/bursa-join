@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
-import { CATEGORIES, checkSubmissionStatus, submitBusiness } from "@/lib/api";
+import { CATEGORIES, PRICE_TIERS, checkSubmissionStatus, submitBusiness } from "@/lib/api";
 import { 
   User, Mail, LogOut, MapPin, Phone,
   Instagram, ArrowRight, ArrowLeft, Loader2, CheckCircle,
@@ -34,6 +34,8 @@ interface FormData {
   description: string;
   ownerName: string;
   categorySlug: string;
+  priceRangeMin: string;
+  priceRangeMax: string;
   isOnlineBusiness: boolean;
   address: string;
   city: string;
@@ -70,6 +72,8 @@ export default function SubmitPage() {
     description: "",
     ownerName: "",
     categorySlug: "",
+    priceRangeMin: "MODERATE",
+    priceRangeMax: "MODERATE",
     isOnlineBusiness: false,
     address: "",
     city: "",
@@ -227,6 +231,8 @@ export default function SubmitPage() {
         description: formData.description,
         ownerName: formData.ownerName,
         categorySlug: formData.categorySlug,
+        priceRangeMin: formData.priceRangeMin as "BUDGET" | "MODERATE" | "PRICEY" | "PREMIUM",
+        priceRangeMax: formData.priceRangeMax as "BUDGET" | "MODERATE" | "PRICEY" | "PREMIUM",
         isOnlineBusiness: formData.isOnlineBusiness,
         // Location fields - only include if not an online business
         address: formData.isOnlineBusiness ? undefined : formData.address,
@@ -426,6 +432,68 @@ export default function SubmitPage() {
                           </option>
                         ))}
                       </select>
+                    </div>
+
+                    {/* Price Range */}
+                    <div>
+                      <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2">
+                        Kisaran Harga <span className="text-emerald-400">*</span>
+                      </label>
+                      <p className="text-[10px] sm:text-xs text-gray-500 mb-2 sm:mb-3">
+                        Pilih rentang harga produk/jasa Anda
+                      </p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] sm:text-xs text-gray-400 mb-1">Dari</label>
+                          <select
+                            name="priceRangeMin"
+                            value={formData.priceRangeMin}
+                            onChange={(e) => {
+                              const newMin = e.target.value;
+                              const minIndex = PRICE_TIERS.findIndex(t => t.value === newMin);
+                              const maxIndex = PRICE_TIERS.findIndex(t => t.value === formData.priceRangeMax);
+                              // Auto-adjust max if min is higher
+                              if (minIndex > maxIndex) {
+                                setFormData(prev => ({ ...prev, priceRangeMin: newMin, priceRangeMax: newMin }));
+                              } else {
+                                setFormData(prev => ({ ...prev, priceRangeMin: newMin }));
+                              }
+                            }}
+                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all appearance-none cursor-pointer"
+                          >
+                            {PRICE_TIERS.map((tier) => (
+                              <option key={tier.value} value={tier.value} className="bg-[#1a1f1d]">
+                                {tier.label} - {tier.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] sm:text-xs text-gray-400 mb-1">Sampai</label>
+                          <select
+                            name="priceRangeMax"
+                            value={formData.priceRangeMax}
+                            onChange={(e) => {
+                              const newMax = e.target.value;
+                              const minIndex = PRICE_TIERS.findIndex(t => t.value === formData.priceRangeMin);
+                              const maxIndex = PRICE_TIERS.findIndex(t => t.value === newMax);
+                              // Auto-adjust min if max is lower
+                              if (maxIndex < minIndex) {
+                                setFormData(prev => ({ ...prev, priceRangeMin: newMax, priceRangeMax: newMax }));
+                              } else {
+                                setFormData(prev => ({ ...prev, priceRangeMax: newMax }));
+                              }
+                            }}
+                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-white/5 border border-white/10 rounded-lg sm:rounded-xl text-white text-sm focus:outline-none focus:border-emerald-500/50 focus:bg-white/[0.07] transition-all appearance-none cursor-pointer"
+                          >
+                            {PRICE_TIERS.map((tier) => (
+                              <option key={tier.value} value={tier.value} className="bg-[#1a1f1d]">
+                                {tier.label} - {tier.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Online Business Toggle */}
@@ -703,6 +771,15 @@ export default function SubmitPage() {
                           <span className="text-gray-500">Kategori</span>
                           <span className="text-white">
                             {CATEGORIES.find(c => c.slug === formData.categorySlug)?.name || "-"}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Harga</span>
+                          <span className="text-white">
+                            {formData.priceRangeMin === formData.priceRangeMax 
+                              ? PRICE_TIERS.find(t => t.value === formData.priceRangeMin)?.label
+                              : `${PRICE_TIERS.find(t => t.value === formData.priceRangeMin)?.label} - ${PRICE_TIERS.find(t => t.value === formData.priceRangeMax)?.label}`
+                            }
                           </span>
                         </div>
                         <div className="flex justify-between">
